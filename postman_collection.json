@@ -1,0 +1,239 @@
+{
+  "info": {
+    "name": "LeadCloser AI REST API",
+    "_postman_id": "leadcloser-ai-api-collection",
+    "description": "Comprehensive Postman Collection for LeadCloser AI Autonomous Sales Qualification Platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register Owner",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ashish Gupta\",\n  \"email\": \"owner@leadcloser.ai\",\n  \"password\": \"password123\",\n  \"businessName\": \"Apex Digital Solutions\",\n  \"businessType\": \"Custom Web & Software Development\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) {",
+                  "    pm.collectionVariables.set('token', jsonData.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"owner@leadcloser.ai\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Get Me (Profile)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Conversations & AI Chat",
+      "item": [
+        {
+          "name": "Initiate Conversation (Public/Widget)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"workspaceSlug\": \"apex-digital\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/conversations", "host": ["{{baseUrl}}"], "path": ["conversations"] }
+          }
+        },
+        {
+          "name": "Send Customer Message (Triggers AI Qualification)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Hi, I need a website for my coaching institute. I want student registration, online fee tracking, and an admin dashboard. What would it cost?\",\n  \"senderType\": \"customer\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/conversations/:id/messages", "host": ["{{baseUrl}}"], "path": ["conversations", ":id", "messages"] }
+          }
+        },
+        {
+          "name": "Takeover Conversation (Pauses AI Bot)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/conversations/:id/takeover", "host": ["{{baseUrl}}"], "path": ["conversations", ":id", "takeover"] }
+          }
+        },
+        {
+          "name": "Resume AI Automation",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/conversations/:id/resume", "host": ["{{baseUrl}}"], "path": ["conversations", ":id", "resume"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Leads & CRM",
+      "item": [
+        {
+          "name": "List Leads",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/leads?page=1&limit=20", "host": ["{{baseUrl}}"], "path": ["leads"] }
+          }
+        },
+        {
+          "name": "Update Lead Stage",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stage\": \"qualified\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/leads/:id/stage", "host": ["{{baseUrl}}"], "path": ["leads", ":id", "stage"] }
+          }
+        },
+        {
+          "name": "Override Lead Score",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"score\": 90,\n  \"reason\": \"High-value referral with confirmed budget\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/leads/:id/score-override", "host": ["{{baseUrl}}"], "path": ["leads", ":id", "score-override"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Services & Estimates",
+      "item": [
+        {
+          "name": "List Active Services",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/services", "host": ["{{baseUrl}}"], "path": ["services"] }
+          }
+        },
+        {
+          "name": "Calculate Estimate Preview (Paise Precision)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"serviceId\": \"{{serviceId}}\",\n  \"addonCodes\": [\"student_portal\", \"payment_gateway\"],\n  \"complexityLevel\": \"standard\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/estimates/calculate", "host": ["{{baseUrl}}"], "path": ["estimates", "calculate"] }
+          }
+        },
+        {
+          "name": "Approve Estimate (Owner/Admin Only)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/estimates/:id/approve", "host": ["{{baseUrl}}"], "path": ["estimates", ":id", "approve"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Appointment Scheduling",
+      "item": [
+        {
+          "name": "Query Real Availability",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/appointments/availability", "host": ["{{baseUrl}}"], "path": ["appointments", "availability"] }
+          }
+        },
+        {
+          "name": "Book Slot (Atomic & Idempotent)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"leadId\": \"{{leadId}}\",\n  \"startTime\": \"2026-10-20T10:00:00.000Z\",\n  \"appointmentType\": \"consultation\",\n  \"idempotencyKey\": \"demo_postman_slot_001\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/appointments", "host": ["{{baseUrl}}"], "path": ["appointments"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analytics & Automation",
+      "item": [
+        {
+          "name": "Get Conversion Overview KPIs",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/analytics/overview", "host": ["{{baseUrl}}"], "path": ["analytics", "overview"] }
+          }
+        },
+        {
+          "name": "List Audit Logs",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/automation/audit-logs", "host": ["{{baseUrl}}"], "path": ["automation", "audit-logs"] }
+          }
+        }
+      ]
+    }
+  ]
+}

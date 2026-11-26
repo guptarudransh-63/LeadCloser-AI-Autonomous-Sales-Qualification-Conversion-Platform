@@ -1,0 +1,12 @@
+{
+  "name": "leadcloser-ai-platform",
+  "version": "1.0.0",
+  "description": "LeadCloser AI — Autonomous Sales Qualification and Conversion Platform",
+  "scripts": {
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "test": "npm --prefix server test",
+    "seed": "npm --prefix server run seed",
+    "build": "npm --prefix client run build"
+  }
+}
